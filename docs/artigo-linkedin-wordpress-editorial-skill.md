@@ -31,4 +31,5 @@ A **WordPress Editorial Skill** foi aprovada e disponibilizada na Agensi. O lan�
 Para mim, a entrega está naquele momento em que posso voltar ao WordPress e continuar de onde parei. O texto está salvo como rascunho, eu consigo verificar o que foi gravado e a decisão de publicar continua comigo.
 
 [Conheça a WordPress Editorial Skill na Agensi](https://www.agensi.io/skills/wordpress-editorial-skill).
+
 [Conheça o Estudo de Caso](https://github.com/rubensplima/wordpress-editorial-skill-case-study)
