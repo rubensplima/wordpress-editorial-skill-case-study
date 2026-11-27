@@ -8,7 +8,7 @@ O ponto de partida foi uma etapa recorrente do meu trabalho como criador de cont
 
 ## Uma infraestrutura pública e um fluxo editorial
 
-Comecei pelo **WordPress MCP Publisher**, um servidor que permite a assistentes compatíveis com o Model Context Protocol (MCP) operar o WordPress por meio da API REST nativa. Publiquei o projeto no GitHub. O contato da Agensi abriu a oportunidade de transformar o fluxo editorial em um produto próprio.
+Comecei pelo **WordPress MCP Publisher**, um servidor que permite a assistentes compatíveis com o Model Context Protocol (MCP) operar o WordPress por meio da API REST nativa. Publiquei o projeto no GitHub sob licença MIT. O contato da Agensi abriu a oportunidade de transformar o fluxo editorial em um produto próprio.
 
 O Publisher oferece operações como consultar posts e gravar rascunhos. A **WordPress Editorial Skill** descreve como o assistente conduz a tarefa: verificar o acesso, validar os dados do artigo, buscar possíveis duplicatas, gravar o rascunho e informar o resultado. O WordPress aplica as permissões da conta conectada. Com essa divisão, a mesma integração pode servir a outros fluxos, e as regras editoriais podem evoluir sem exigir mudanças na conexão com o site.
 
@@ -39,7 +39,7 @@ A sequência começava pela verificação da conta e dos dados do artigo. Em seg
 
 | Cenário | Resultado registrado no WordPress local |
 | --- | --- |
-| Enviar um artigo novo | Rascunho criado com ID 6 e confirmado em uma consulta posterior. |
+| Enviar um artigo novo | Rascunho criado e confirmado em uma consulta posterior. |
 | Repetir o slug de um artigo existente | A criação foi bloqueada com `duplicate_slug`. |
 | Repetir o título de um artigo existente | A criação foi bloqueada com `duplicate_title`, em um teste que usou um título com acentuação. |
 
@@ -51,9 +51,9 @@ Em 26 de novembro de 2026, validei a versão 0.1.0 da Skill em um WordPress isol
 
 | Cenário | Resultado registrado em homologação |
 | --- | --- |
-| Artigo sem slug informado | O rascunho de ID 8 foi confirmado por leitura. Na repetição, a busca pelo título encontrou somente esse post e encerrou o fluxo antes de outra escrita. |
-| Artigo com slug informado | O rascunho de ID 9 foi confirmado com o slug solicitado e o conteúdo preservado. Uma nova busca por slug retornou somente esse post. |
-| Fluxo completo no Codex desktop | O rascunho de ID 10 foi gravado e conferido por leitura. No reenvio, as buscas por título e slug encontraram o mesmo post, e o fluxo encerrou antes de outra escrita. |
+| Artigo sem slug informado | O rascunho foi confirmado por leitura. Na repetição, a busca pelo título encontrou somente esse post e encerrou o fluxo antes de outra escrita. |
+| Artigo com slug informado | O rascunho foi confirmado com o slug solicitado e o conteúdo preservado. Uma nova busca por slug retornou somente esse post. |
+| Fluxo completo no Codex desktop | O rascunho foi gravado e conferido por leitura. No reenvio, as buscas por título e slug encontraram o mesmo post, e o fluxo encerrou antes de outra escrita. |
 
 A validação cobriu reenvios sucessivos. Como a busca e a criação são operações separadas, o comportamento em envios simultâneos ficou fora do escopo dos testes.
 

@@ -22,9 +22,9 @@ A automação precisava respeitar esse ponto de passagem. O assistente receberia
 
 Comecei pela comunicação com o WordPress. O Publisher expõe um conjunto de ferramentas pelo Model Context Protocol, ou MCP. Um cliente compatível pode consultar posts e criar rascunhos usando essas ferramentas. Publiquei o projeto no GitHub para que a integração pudesse ser examinada e reutilizada.
 
-A Skill acrescentou a lógica de trabalho editorial. A tarefa tinha uma ordem que afeta o resultado. O assistente valida o material, confirma a conta e o site de destino, pesquisa título e slug, cria um rascunho quando as consultas permitem e lê o registro gravado. Se encontra um post correspondente, apresenta o conflito e informa qual post já existe. Quando o artigo chega sem slug, o fluxo pode seguir com a verificação pelo título.
+A Skill acrescentou a lógica de trabalho editorial. Ela orienta o assistente a validar o artigo, verificar o destino, buscar duplicatas e confirmar o rascunho no WordPress. Ao encontrar um post correspondente, o assistente informa o conflito ao editor.
 
-Essa divisão permitiu manter a integração como projeto independente. A sequência editorial pôde ser desenvolvida e testada à parte, usando um contrato de operações do Publisher.
+Essa divisão permitiu manter a integração como projeto independente. O Publisher tem código público sob licença MIT. A Skill é distribuída como produto comercial pela Agensi. [Licença do Publisher](https://github.com/rubensplima/wordpress-mcp-publisher/blob/v0.4.1/LICENSE)
 
 ### 04. Arquitetura técnica
 
@@ -48,7 +48,7 @@ Na criação de um rascunho, a leitura posterior fecha o fluxo. A resposta da fe
 | Marco | Decisão ou entrega |
 | --- | --- |
 | Publisher público | A integração começou como ferramenta para o meu fluxo editorial e ganhou um repositório aberto. |
-| 13 de novembro de 2026 | A conversa com a Agensi esclareceu como uma Skill poderia ser distribuída a partir de um projeto MCP público. |
+| 13 de novembro de 2026 | O contato com a Agensi abriu a oportunidade de distribuir a Skill como produto. |
 | 14 de novembro de 2026 | Defini o escopo do MVP e escolhi o Publisher 0.4.0 como base do protótipo em LocalWP. |
 | Reta final de novembro | O Publisher público recebeu a versão 0.4.1 de manutenção. Em paralelo, a Skill passou a usar o contrato do conector 0.4.2 e foi validada em um WordPress de homologação. |
 | 26 de novembro de 2026 | A validação do fluxo completo do MVP 0.1.0 e a disponibilização da Skill na Agensi foram registradas. |
@@ -57,17 +57,17 @@ A escolha do LocalWP permitiu verificar, com uma conta de Editor, o comportament
 
 ### 06. Segurança e controle editorial
 
-A integração lida com duas perguntas antes da escrita. Quem está conectado, e em qual WordPress a operação vai ocorrer? A Skill verifica a identidade e o destino. A autenticação da conexão MCP é tratada pelo cliente e pelo servidor. As permissões sobre os posts continuam a cargo do WordPress. As credenciais ficam nos mecanismos de autenticação usados pela integração.
+A integração lida com duas perguntas antes da escrita. Quem está conectado, e em qual WordPress a operação vai ocorrer? A Skill verifica a identidade e o destino. A autenticação da conexão MCP é tratada pelo cliente e pelo servidor. As permissões sobre os posts continuam a cargo do WordPress.
 
 O limite editorial é o status `draft`. A Skill cria um rascunho e o editor decide quando publicar. Se a resposta da criação for inconclusiva, o procedimento é consultar o WordPress antes de considerar uma nova escrita. Assim, um resultado incerto pode ser investigado sem repetir automaticamente a operação que talvez já tenha criado o post.
 
-A manutenção do Publisher público 0.4.1 fixou versões de dependências, incluiu um lockfile e colocou o endpoint MCP em modo de manutenção por padrão. A release registra que a auditoria de dependências daquela instalação reportou zero vulnerabilidades. No conector 0.4.2, os testes observaram a continuidade de sessões OAuth em homologação e produção. A continuidade foi conferida por chamadas autenticadas posteriores, e o mecanismo interno de renovação do token ficou fora da verificação. [Notas da release 0.4.1](https://github.com/rubensplima/wordpress-mcp-publisher/releases/tag/v0.4.1)
+A manutenção do Publisher público 0.4.1 fixou versões de dependências, incluiu um lockfile e colocou o endpoint MCP em modo de manutenção por padrão. A release registra que a auditoria de dependências daquela instalação reportou zero vulnerabilidades. No conector 0.4.2, os testes observaram a continuidade de sessões OAuth em homologação e produção. Chamadas autenticadas posteriores confirmaram que a conexão continuava utilizável. [Notas da release 0.4.1](https://github.com/rubensplima/wordpress-mcp-publisher/releases/tag/v0.4.1)
 
 ### 07. A oportunidade comercial
 
 A Agensi encontrou o Publisher ao pesquisar projetos MCP públicos relacionados à publicação no WordPress. O contato mostrou que uma ferramenta criada para meu uso podia servir de base para um produto voltado a outros fluxos editoriais.
 
-A conversa também esclareceu o recorte da entrega. Caberia ao usuário configurar a conexão autorizada no próprio agente. A Skill deveria reunir o procedimento editorial e as instruções de configuração necessárias para que essa experiência fosse reproduzível. Isso transformou uma sequência que eu já entendia por conhecer a integração em uma entrega que outra pessoa poderia instalar e usar.
+A oportunidade trouxe uma decisão de produto. Eu precisava documentar a instalação e a configuração de uma conexão autorizada para que outra pessoa pudesse usar a Skill no próprio ambiente.
 
 ### 08. Desenvolvimento da Skill
 
@@ -79,11 +79,11 @@ Antes do teste completo, usei o Codex CLI para simular situações como entrada 
 
 | Ambiente ou cenário | Resultado registrado |
 | --- | --- |
-| LocalWP com Publisher 0.4.0 | Rascunho de ID 6 criado e confirmado por leitura. Os testes de repetição registraram `duplicate_slug` e `duplicate_title`. O teste de título usou acentuação. |
-| Homologação 0.4.2, artigo sem slug | Rascunho de ID 8 confirmado. Na repetição, a busca por título encontrou esse post e a execução encerrou antes de outra escrita. |
-| Homologação 0.4.2, artigo com slug | Rascunho de ID 9 confirmado com o slug solicitado e o conteúdo preservado. A consulta pelo slug retornou esse post. |
-| Codex desktop, fluxo completo da Skill | Rascunho de ID 10 confirmado por leitura, incluindo status, slug e conteúdo. O reenvio localizou o mesmo post pelas buscas por título e slug, sem nova criação. |
-| Conector 0.4.2 em produção | Chamadas específicas confirmaram a identidade da conta em uma conexão existente e demonstraram criação e atualização de um rascunho de teste. O resultado se refere ao conector. A aceitação de ponta a ponta da Skill ocorreu em homologação. |
+| LocalWP com Publisher 0.4.0 | Rascunho criado e confirmado por leitura. Os testes de repetição registraram `duplicate_slug` e `duplicate_title`. O teste de título usou acentuação. |
+| Homologação 0.4.2, artigo sem slug | Rascunho confirmado por leitura. Na repetição, a busca por título encontrou esse post e a execução encerrou antes de outra escrita. |
+| Homologação 0.4.2, artigo com slug | Rascunho confirmado com o slug solicitado e o conteúdo preservado. A consulta pelo slug retornou esse post. |
+| Codex desktop, fluxo completo da Skill | Rascunho confirmado por leitura, incluindo status, slug e conteúdo. O reenvio localizou o mesmo post pelas buscas por título e slug, sem nova criação. |
+| Conector 0.4.2 em produção | A conexão existente foi verificada, e o conector criou e atualizou um rascunho de teste. O fluxo completo da Skill foi validado em homologação. |
 
 Os testes de duplicidade cobriram execuções sucessivas. As consultas e a criação são operações separadas. O comportamento de duas gravações simultâneas ficou fora dessa validação. O caso de resposta incerta após a escrita foi exercitado em simulação.
 
@@ -112,4 +112,3 @@ A evolução técnica também pode avaliar a portabilidade para outros clientes,
 - [Repositório público do WordPress MCP Publisher](https://github.com/rubensplima/wordpress-mcp-publisher)
 - [Versão pública do Publisher 0.4.1](https://github.com/rubensplima/wordpress-mcp-publisher/releases/tag/v0.4.1)
 - [Listagem pública da WordPress Editorial Skill](https://www.agensi.io/skills/wordpress-editorial-skill)
-- Registros internos de arquitetura e aceitação do MVP 0.1.0, conversas de validação dos conectores e correspondência de novembro de 2026.

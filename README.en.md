@@ -8,7 +8,7 @@ I started with a recurring task in my work as a content creator. Once an article
 
 ## An open integration and an editorial workflow
 
-I started by building **WordPress MCP Publisher**, a server that lets assistants compatible with the Model Context Protocol (MCP) work with WordPress through its native REST API. I published the project on GitHub. When Agensi contacted me, I saw an opportunity to turn the editorial workflow into a product of its own.
+I started by building **WordPress MCP Publisher**, a server that lets assistants compatible with the Model Context Protocol (MCP) work with WordPress through its native REST API. I published the project on GitHub under the MIT License. When Agensi contacted me, I saw an opportunity to turn the editorial workflow into a product of its own.
 
 The Publisher provides operations such as searching posts and saving drafts. **WordPress Editorial Skill** defines how the assistant uses those operations. It checks access, validates the article, searches for duplicates, saves a draft, and reports the result. WordPress enforces the connected account's permissions. Other workflows can use the same integration, and the editorial rules can evolve independently of the WordPress connection.
 
@@ -39,7 +39,7 @@ The workflow first checked the account and article details. It then searched for
 
 | Scenario | Result recorded in local WordPress |
 | --- | --- |
-| Submit a new article | Draft ID 6 was created and confirmed in a subsequent read. |
+| Submit a new article | A draft was created and confirmed in a subsequent read. |
 | Reuse an existing slug | Creation stopped with `duplicate_slug`. |
 | Reuse an existing title | Creation stopped with `duplicate_title`. The test title included accented characters. |
 
@@ -51,9 +51,9 @@ On November 26, 2026, I validated Skill v0.1.0 in an isolated WordPress staging 
 
 | Scenario | Result recorded in staging |
 | --- | --- |
-| Article submitted without a slug | Draft ID 8 was confirmed by reading it back. On resubmission, the title search found only that post and stopped before another write. |
-| Article submitted with a slug | Draft ID 9 was confirmed with the requested slug and the original content. A follow-up slug search returned only that post. |
-| Complete workflow in Codex desktop | Draft ID 10 was saved and confirmed by reading it back. On resubmission, the title and slug searches found the same post and stopped before another write. |
+| Article submitted without a slug | The draft was confirmed by reading it back. On resubmission, the title search found only that post and stopped before another write. |
+| Article submitted with a slug | The draft was confirmed with the requested slug and the original content. A follow-up slug search returned only that post. |
+| Complete workflow in Codex desktop | The draft was saved and confirmed by reading it back. On resubmission, the title and slug searches found the same post and stopped before another write. |
 
 The validation covered sequential resubmissions. Search and creation are separate operations, so simultaneous submissions were outside the scope of the tests.
 
