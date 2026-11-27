@@ -12,6 +12,23 @@ I started by building **WordPress MCP Publisher**, a server that lets assistants
 
 The Publisher provides operations such as searching posts and saving drafts. **WordPress Editorial Skill** defines how the assistant uses those operations. It checks access, validates the article, searches for duplicates, saves a draft, and reports the result. WordPress enforces the connected account's permissions. Other workflows can use the same integration, and the editorial rules can evolve independently of the WordPress connection.
 
+## System architecture
+
+```mermaid
+flowchart TB
+    Skill["WordPress Editorial Skill"] -. Guides .-> Assistant["AI assistant"]
+    Assistant -->|Calls MCP tools| Publisher["WordPress MCP Publisher"]
+    Publisher -->|Sends HTTP requests| API
+    subgraph CMS ["WordPress"]
+        API["REST API"] -->|Reads and writes| Posts["Posts"]
+    end
+    Editor["Editor"] -->|Reviews the draft| Posts
+```
+
+In the MVP, Codex applied the Skill's rules in the client. The Publisher received MCP calls and executed the operations through the REST API. WordPress enforced the connected account's permissions, and the editor could open the draft for review.
+
+The MVP documentation describes input validation, duplicate checks, and draft confirmation. The Publisher's public code shows how the server registers the tools and communicates with the REST API. [MCP server](https://github.com/rubensplima/wordpress-mcp-publisher/blob/v0.4.1/src/server.js) · [REST API client](https://github.com/rubensplima/wordpress-mcp-publisher/blob/v0.4.1/src/wordpress.js)
+
 ## Prototyping in LocalWP
 
 On November 14, 2026, I defined the scope of the first delivery. The prototype took a finished article and created a draft ready for review. I used Codex CLI as the reference client, Publisher v0.4.0, and an isolated WordPress installation in LocalWP. I tested with an account assigned the Editor role.

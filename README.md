@@ -12,6 +12,23 @@ Comecei pelo **WordPress MCP Publisher**, um servidor que permite a assistentes 
 
 O Publisher oferece operações como consultar posts e gravar rascunhos. A **WordPress Editorial Skill** descreve como o assistente conduz a tarefa: verificar o acesso, validar os dados do artigo, buscar possíveis duplicatas, gravar o rascunho e informar o resultado. O WordPress aplica as permissões da conta conectada. Com essa divisão, a mesma integração pode servir a outros fluxos, e as regras editoriais podem evoluir sem exigir mudanças na conexão com o site.
 
+## Arquitetura técnica
+
+```mermaid
+flowchart TB
+    Skill["WordPress Editorial Skill"] -. Orienta .-> Assistant["Assistente de IA"]
+    Assistant -->|Chama ferramentas MCP| Publisher["WordPress MCP Publisher"]
+    Publisher -->|Envia requisições HTTP| API
+    subgraph CMS ["WordPress"]
+        API["API REST"] -->|Consulta e grava| Posts["Posts"]
+    end
+    Editor["Editor"] -->|Revisa o rascunho| Posts
+```
+
+No MVP, o Codex aplicava as regras da Skill no próprio cliente. O Publisher recebia as chamadas MCP e executava as operações pela API REST. O WordPress aplicava as permissões da conta conectada, e o editor podia abrir o rascunho para revisão.
+
+A documentação do MVP descreve a validação de entradas, as consultas de duplicidade e a confirmação do rascunho. O código público do Publisher permite verificar o registro das ferramentas e a comunicação com a API REST. [Servidor MCP](https://github.com/rubensplima/wordpress-mcp-publisher/blob/v0.4.1/src/server.js) · [Cliente da API REST](https://github.com/rubensplima/wordpress-mcp-publisher/blob/v0.4.1/src/wordpress.js)
+
 ## O protótipo no LocalWP
 
 Em 14 de novembro de 2026, defini o escopo da primeira entrega. O protótipo partia de um artigo pronto e terminava com um rascunho disponível para revisão. Usei o Codex CLI como cliente de referência, o Publisher v0.4.0 e uma instalação isolada do WordPress no LocalWP. Uma conta com perfil de Editor permitiu testar o fluxo em condições próximas às do uso editorial.
